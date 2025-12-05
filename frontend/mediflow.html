@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediFlow - Smart Health & Diet</title>
+<style>
+:root {
+    --primary-color: #1a73e8;
+    --secondary-color: #00c853;
+    --background-light: #f7f9fc;
+    --text-dark: #333;
+    --text-light: #666;
+    --text-white: #fff;
+    --border-radius: 12px;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: var(--background-light);
+    color: var(--text-dark);
+}
+
+h2 { text-align: center; color: var(--primary-color); margin-top: 40px; }
+
+/* Floating Health Tip */
+.health-tip {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--primary-color);
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    font-weight: 500;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.health-tip:hover { transform: translateY(-5px); opacity: 0.9; }
+
+/* Vitals Dashboard */
+.vitals { max-width: 500px; margin: 50px auto; }
+.vital { margin-bottom: 20px; }
+.vital h4 { margin: 0 0 8px 0; }
+.progress-bar { width: 100%; background: #eee; border-radius: var(--border-radius); height: 20px; overflow: hidden; }
+.progress { height: 100%; width: 0%; background: var(--secondary-color); transition: width 0.6s ease; }
+.vital span { display: block; margin-top: 5px; font-weight: 500; }
+
+/* Quiz & Diet */
+.quiz-container, .diet-container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+.quiz-container h3, .diet-container h3 { margin-top: 0; color: var(--secondary-color); }
+.quiz-container button, .diet-container button {
+    margin: 10px 5px 0 0;
+    padding: 10px 15px;
+    border: none;
+    background: var(--primary-color);
+    color: #fff;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+}
+.quiz-container button:hover, .diet-container button:hover { background: #1660cc; }
+
+/* Floating Reminder */
+.floating-reminder {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--secondary-color);
+    color: #fff;
+    padding: 15px 20px;
+    border-radius: var(--border-radius);
+    animation: pulse 1.5s infinite;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    display: none;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+input[type="number"], select {
+    padding: 8px;
+    width: 100px;
+    border-radius: var(--border-radius);
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+</style>
+</head>
+<body>
+
+<h2>Welcome to MediFlow Smart Health</h2>
+
+<div id="healthTip" class="health-tip">💡 Daily Tip: Drink 8 glasses of water today!</div>
+
+<!-- Vitals Dashboard -->
+<div class="vitals">
+  <div class="vital">
+    <h4>Heart Rate</h4>
+    <div class="progress-bar"><div class="progress" id="heartRate"></div></div>
+    <span id="hrValue">72 bpm</span>
+  </div>
+  <div class="vital">
+    <h4>SpO₂</h4>
+    <div class="progress-bar"><div class="progress" id="spo2"></div></div>
+    <span id="spValue">95%</span>
+  </div>
+  <div class="vital">
+    <h4>Temperature</h4>
+    <div class="progress-bar"><div class="progress" id="temp"></div></div>
+    <span id="tempValue">98.6°F</span>
+  </div>
+</div>
+
+<!-- Quiz -->
+<div class="quiz-container">
+  <h3 id="quizQuestion">Question</h3>
+  <div id="quizOptions"></div>
+  <button onclick="nextQuestion()">Next</button>
+  <p id="quizResult"></p>
+</div>
+
+<!-- Diet Plan -->
+<div class="diet-container">
+  <h3>Personalized Diet Plan</h3>
+  <label>Weight (kg):</label><input type="number" id="weightInput" placeholder="70">
+  <label>Age:</label><input type="number" id="ageInput" placeholder="25"><br><br>
+  <label>Gender:</label>
+  <select id="genderInput">
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+  </select>
+  <label>Activity:</label>
+  <select id="activityInput">
+    <option value="low">Low</option>
+    <option value="moderate">Moderate</option>
+    <option value="high">High</option>
+  </select><br><br>
+  <button onclick="generateDiet()">Get Diet Plan</button>
+  <div id="dietPlan" style="margin-top:15px; font-weight:500;"></div>
+</div>
+
+<div class="floating-reminder" id="floatingReminder">💧 Remember to drink water!</div>
+
+<script>
+/* Floating Health Tips */
+const tips = [
+  "💧 Drink water regularly",
+  "🛌 Take a short power nap",
+  "🍎 Eat more fruits and vegetables",
+  "🧘‍♂️ Stretch every hour",
+  "🚶‍♀️ Walk for 10 minutes"
+];
+const tipElement = document.getElementById('healthTip');
+function showTip() { tipElement.textContent = tips[Math.floor(Math.random()*tips.length)]; }
+tipElement.addEventListener('click', showTip);
+setInterval(showTip, 60000);
+
+/* Vitals Animation */
+function updateVitals() {
+  const hr = 60 + Math.floor(Math.random()*40);
+  const spo2 = 90 + Math.floor(Math.random()*10);
+  const temp = 97 + Math.floor(Math.random()*3);
+  document.getElementById('heartRate').style.width = hr + '%';
+  document.getElementById('hrValue').textContent = hr + ' bpm';
+  document.getElementById('spo2').style.width = spo2 + '%';
+  document.getElementById('spValue').textContent = spo2 + '%';
+  document.getElementById('temp').style.width = temp + '%';
+  document.getElementById('tempValue').textContent = temp + '°F';
+}
+setInterval(updateVitals, 3000);
+updateVitals();
+
+/* Quiz */
+const quiz = [
+  {q:"Do you drink 8+ glasses of water daily?", a:["Yes","No"], correct:0},
+  {q:"Do you exercise at least 3 times a week?", a:["Yes","No"], correct:0},
+  {q:"Do you sleep 7-8 hours per night?", a:["Yes","No"], correct:0},
+  {q:"Do you eat fruits and vegetables daily?", a:["Yes","No"], correct:0},
+  {q:"Do you feel stressed often?", a:["Yes","No"], correct:1},
+  {q:"Do you take regular health checkups?", a:["Yes","No"], correct:0}
+];
+let currentQ = 0, score = 0;
+const quizQuestion = document.getElementById('quizQuestion');
+const quizOptions = document.getElementById('quizOptions');
+const quizResult = document.getElementById('quizResult');
+
+function showQuestion() {
+  if(currentQ >= quiz.length){
+    quizQuestion.textContent="Quiz Completed!";
+    quizOptions.innerHTML="";
+    quizResult.textContent=`Your Score: ${score} / ${quiz.length}`;
+    return;
+  }
+  quizQuestion.textContent=quiz[currentQ].q;
+  quizOptions.innerHTML="";
+  quiz[currentQ].a.forEach((option,index)=>{
+    const btn=document.createElement('button');
+    btn.textContent=option;
+    btn.onclick=()=>{if(index===quiz[currentQ].correct) score++; nextQuestion();};
+    quizOptions.appendChild(btn);
+  });
+}
+function nextQuestion(){currentQ++;showQuestion();}
+showQuestion();
+
+/* Floating Health Reminder */
+const reminders = ["💧 Drink Water","💊 Take your Medicine","🛌 Rest if tired","🍎 Eat healthy snack","🧘‍♂️ Stretch"];
+const floatingReminder = document.getElementById('floatingReminder');
+function showReminder(){
+  floatingReminder.textContent = reminders[Math.floor(Math.random()*reminders.length)];
+  floatingReminder.style.display="block";
+  setTimeout(()=>floatingReminder.style.display="none",5000);
+}
+setInterval(showReminder,3600000);
+setTimeout(showReminder,5000);
+
+/* Smart Diet Plan Generator */
+function generateDiet() {
+  const weight=parseFloat(document.getElementById('weightInput').value);
+  const age=parseInt(document.getElementById('ageInput').value);
+  const gender=document.getElementById('genderInput').value;
+  const activity=document.getElementById('activityInput').value;
+  if(isNaN(weight)||isNaN(age)||weight<=0||age<=0){document.getElementById('dietPlan').textContent="Please enter valid values."; return;}
+
+  // BMR Calculation
+  let bmr;
+  if(gender==='male'){ bmr=10*weight + 6.25*170 - 5*age + 5; } // Assuming avg height 170cm
+  else{ bmr=10*weight + 6.25*160 - 5*age -161; } // avg female height 160cm
+
+  // Activity multiplier
+  let multiplier=1.2;
+  if(activity==='moderate') multiplier=1.55;
+  else if(activity==='high') multiplier=1.9;
+
+  const calories=Math.round(bmr*multiplier);
+  let plan="";
+
+  if(weight<50) plan="🥗 Gain weight: eat high-protein & carb-rich foods: eggs, legumes, rice, nuts, healthy fats. 3 meals + snacks.";
+  else if(weight<=70) plan="🍎 Maintain weight: balanced diet with protein, complex carbs, vegetables & fruits. 3 meals + healthy snacks.";
+  else plan="🥦 Lose weight: focus on vegetables, lean protein, reduce sugar & refined carbs, control portions, stay active.";
+
+  document.getElementById('dietPlan').innerHTML=`Estimated Calories: ${calories} kcal/day<br>${plan}`;
+}
+</script>
+
+</body>
+</html>

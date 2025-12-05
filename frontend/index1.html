@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Medical Kiosk - Home</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #f8f9fa; color: #343a40; line-height: 1.6; }
+        .navbar { background-color: #007bff; color: white; padding: 1em 2em; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .navbar .logo { font-size: 1.5em; font-weight: bold; text-decoration: none; color: white; }
+        .navbar a { color: white; text-decoration: none; margin-left: 20px; padding: 5px 10px; border-radius: 4px; transition: background-color 0.3s ease; }
+        .navbar a:hover { background-color: rgba(255,255,255,0.2); }
+        .hero { background: linear-gradient(to right, #007bff, #0056b3); color: white; padding: 6em 2em; text-align: center; border-bottom-left-radius: 50px; border-bottom-right-radius: 50px; }
+        .hero h1 { font-size: 3em; margin-bottom: 15px; }
+        .hero p { font-size: 1.2em; max-width: 800px; margin: 0 auto 30px auto; }
+        .hero img { max-width: 60%; height: auto; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .container { max-width: 1000px; margin: 3em auto; padding: 2em; background-color: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .container h2 { color: #007bff; border-bottom: 2px solid #e9ecef; padding-bottom: 10px; margin-bottom: 20px; }
+        .footer { background-color: #343a40; color: white; text-align: center; padding: 1.5em 0; margin-top: 4em; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html" class="logo">Smart Medical Kiosk</a>
+        <div id="auth-links">
+            <a href="signup.html">Sign Up</a>
+            <a href="login.html">Login</a>
+        </div>
+    </div>
+
+    <div class="hero">
+        <h1>Revolutionizing Healthcare Access</h1>
+        <p>Introducing the Smart Medical Kiosk: Your Partner in Remote Diagnostics and Automated Care.</p>
+        <img src="assets/images/kiosk.png" alt="Medical Kiosk" style="max-width: 50%; height: auto; margin-top: 20px;">
+    </div>
+
+    <div class="container">
+        <h2>About the Project</h2>
+        <p>Our innovative system integrates an ESP32-powered medical kiosk with a powerful web-based dashboard. The kiosk is equipped with advanced sensors to collect vital patient data in real-time, securely transmitting it to our cloud server.</p>
+        <p>Healthcare professionals can access a comprehensive dashboard to remotely monitor patient vitals, view AI-driven disease predictions, and make informed decisions. Upon doctor approval, the system facilitates automated, precise medication dispensing directly from the kiosk.</p>
+        <h3>Key Features:</h3>
+        <ul>
+            <li>Real-time Vital Sign Monitoring (Heart Rate, SpO₂, Temperature).</li>
+            <li>AI-Assisted Preliminary Disease Prediction.</li>
+            <li>Secure Doctor Dashboard for Remote Oversight.</li>
+            <li>Automated, Approved Medication Dispensing.</li>
+            <li>Comprehensive Patient History and Record Keeping.</li>
+            <li>Seamless ESP32-to-Web Server Communication.</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Smart Medical Kiosk Project. All rights reserved.</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const authLinks = document.getElementById('auth-links');
+            const token = localStorage.getItem('token');
+            const userName = localStorage.getItem('userName'); // Stored when user logs in
+
+            if (token && userName) {
+                authLinks.innerHTML = `
+                    <span style="margin-right: 10px;">Welcome, Dr. ${userName}</span>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="#" id="logout-btn">Logout</a>
+                `;
+                document.getElementById('logout-btn').addEventListener('click', () => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('userName');
+                    alert('You have been logged out.');
+                    window.location.reload(); // Reload page to reflect logout status
+                });
+            }
+        });
+    </script>
+</body>
+</html>

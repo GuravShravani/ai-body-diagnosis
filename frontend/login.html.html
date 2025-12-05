@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MediFlow Kiosk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a73e8; /* Google Blue */
+            --secondary-color: #00c853; /* Vibrant Green for accents */
+            --background-light: #f7f9fc; /* Very light grey-blue for main background */
+            --background-card: #ffffff;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --text-white: #ffffff;
+            --border-radius-large: 15px;
+            --border-radius-small: 8px;
+            --shadow-light: 0 5px 25px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 35px rgba(0,0,0,0.12);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent scrollbar from background effects */
+            position: relative;
+        }
+
+        /* Background gradient circles - similar to hero section */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            background: rgba(var(--primary-color), 0.05); /* Lighter primary color for background */
+            border-radius: 50%;
+            filter: blur(80px); /* Soft blur effect */
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::before {
+            top: 10%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+        }
+
+        body::after {
+            bottom: 15%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(var(--secondary-color), 0.05); /* Lighter secondary color */
+        }
+
+
+        .login-container {
+            background-color: var(--background-card);
+            padding: 40px;
+            border-radius: var(--border-radius-large);
+            box-shadow: var(--shadow-light);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            position: relative; /* For z-index to be above background effects */
+            z-index: 1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2em;
+            color: var(--primary-color);
+            margin-bottom: 35px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: calc(100% - 24px); /* Account for padding */
+            padding: 14px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius-small);
+            font-size: 1em;
+            color: var(--text-dark);
+            background-color: var(--background-light);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.2);
+            background-color: var(--background-card);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: var(--text-white);
+            border: none;
+            border-radius: var(--border-radius-small);
+            font-size: 1.15em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 5px 20px rgba(var(--primary-color), 0.25);
+        }
+
+        .btn-submit:hover {
+            background-color: #1660cc; /* Slightly darker primary */
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(var(--primary-color), 0.35);
+        }
+
+        .link-text {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.95em;
+            color: var(--text-light);
+        }
+
+        .link-text a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .link-text a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 500px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 25px;
+            }
+            h2 {
+                font-size: 2em;
+                margin-bottom: 30px;
+            }
+            .form-group input {
+                padding: 12px 10px;
+            }
+            .btn-submit {
+                font-size: 1.05em;
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>User Login</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn-submit">Login Securely</button>
+        </form>
+        <div class="link-text">
+            New to MediFlow? <a href="signup.html">Create an Account</a>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:5000/api/auth'; // Backend auth endpoint
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(data.message + '\nWelcome, Ms. ' + data.user.name + '!');
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userName', data.user.name);
+                    localStorage.setItem('userId', data.user.id); // Store doctor's ID
+                    window.location.href = 'dashboard.html'; // Redirect to dashboard
+                } else {
+                    alert('Login Failed: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error during login:', error);
+                alert('An error occurred during login. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

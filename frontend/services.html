@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediFlow Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f8ff;
+        color: #333;
+    }
+    .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1em 2em;
+        background-color: #1a73e8;
+        color: white;
+    }
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        margin-left: 20px;
+        font-weight: 500;
+    }
+    .container {
+        max-width: 900px;
+        margin: 2em auto;
+        padding: 2em;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 1em;
+        color: #1a73e8;
+    }
+    .accordion {
+        background-color: #1a73e8;
+        color: white;
+        cursor: pointer;
+        padding: 15px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 1.1em;
+        transition: 0.3s;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+    .accordion:hover {
+        background-color: #1660cc;
+    }
+    .active, .accordion:after {
+        font-weight: bold;
+    }
+    .panel {
+        padding: 0 15px;
+        background-color: #f1f1f1;
+        display: none;
+        overflow: hidden;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+    .panel p, .panel ul {
+        margin: 1em 0;
+    }
+    .panel ul li {
+        margin-bottom: 0.5em;
+    }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="logo">MediFlow</div>
+    
+</div>
+
+<div class="container" id="services">
+    <h1>Our Services</h1>
+
+    <!-- Daily Checkup -->
+    <button class="accordion">Daily Checkup</button>
+    <div class="panel">
+        <p>Regular health monitoring to ensure your body is functioning optimally:</p>
+        <ul>
+            <li>Blood Pressure Measurement</li>
+            <li>Heart Rate Check</li>
+            <li>Temperature Monitoring</li>
+            <li>Basic Blood Tests</li>
+        </ul>
+    </div>
+
+    <!-- Teleconsultation -->
+    <button class="accordion">Teleconsultation</button>
+    <div class="panel">
+        <p>Connect with certified doctors online from the comfort of your home:</p>
+        <ul>
+            <li>Video Consultation with specialists</li>
+            <li>Prescription Upload & Guidance</li>
+            <li>Follow-up Reminders</li>
+            <li>AI-based Health Tips</li>
+        </ul>
+    </div>
+
+    <!-- Fitness Guidance -->
+    <button class="accordion">Fitness Guidance</button>
+    <div class="panel">
+        <p>Personalized fitness plans to help you stay healthy and active:</p>
+        <ul>
+            <li>Workout Plans & Tracking</li>
+            <li>Yoga & Stretching Routines</li>
+            <li>Diet Recommendations Based on Goals</li>
+            <li>Daily Activity Monitoring</li>
+        </ul>
+    </div>
+
+    <!-- Lab Tests -->
+    <button class="accordion">Lab Tests</button>
+    <div class="panel">
+        <p>Comprehensive lab testing services with easy access to results:</p>
+        <ul>
+            <li>Blood Tests (CBC, Sugar, Cholesterol)</li>
+            <li>Urine Analysis</li>
+            <li>Vitamin & Mineral Deficiency Tests</li>
+            <li>Report Uploads & Doctor Consultation</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    const accordions = document.querySelectorAll('.accordion');
+    accordions.forEach(acc => {
+        acc.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const panel = this.nextElementSibling;
+            if(panel.style.display === "block"){
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

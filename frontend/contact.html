@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MediFlow - Contact Us</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary-color: #1a73e8;
+        --secondary-color: #00c853;
+        --background-light: #f0f2f5;
+        --window-bg: #ffffff;
+        --text-dark: #333333;
+        --text-light: #666666;
+        --text-white: #ffffff;
+        --border-radius-large: 15px;
+        --border-radius-small: 8px;
+        --shadow-light: 0 8px 25px rgba(0,0,0,0.08);
+        --shadow-hover: 0 12px 35px rgba(0,0,0,0.12);
+    }
+
+    body {
+        font-family: 'Montserrat', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--background-light);
+        color: var(--text-dark);
+    }
+
+    /* Navbar */
+    .navbar {
+        background-color: var(--window-bg);
+        padding: 1em 3em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: var(--shadow-light);
+        border-bottom-left-radius: var(--border-radius-large);
+        border-bottom-right-radius: var(--border-radius-large);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    .navbar .logo { font-family: 'Playfair Display', serif; font-size: 1.8em; font-weight: 700; color: var(--primary-color); text-decoration: none; display: flex; align-items: center; }
+    .navbar .logo img { height: 35px; margin-right: 10px; }
+
+    /* Page title */
+    .page-title {
+        text-align: center;
+        font-family: 'Playfair Display', serif;
+        font-size: 2.8em;
+        color: var(--primary-color);
+        margin-top: 2em;
+    }
+
+    /* Contact container */
+    .contact-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 1000px;
+        margin: 3em auto;
+        gap: 2em;
+        padding: 0 1em;
+    }
+
+    .contact-card {
+        background-color: var(--window-bg);
+        padding: 2em;
+        border-radius: var(--border-radius-large);
+        box-shadow: var(--shadow-light);
+        flex: 1 1 400px;
+        min-width: 300px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .contact-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+
+    .contact-card h3 { color: var(--primary-color); margin-bottom: 1em; }
+    .contact-card p { margin-bottom: 1em; color: var(--text-light); line-height: 1.6; }
+    .contact-card ul { list-style: none; padding: 0; }
+    .contact-card ul li { margin-bottom: 10px; font-size: 1em; color: var(--text-dark); }
+
+    /* Map wrapper responsive */
+    .map-wrapper {
+        width: 100%;
+        height: 0;
+        padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        position: relative;
+        border-radius: var(--border-radius-small);
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-top: 1em;
+    }
+    .map-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    /* Form */
+    .contact-form input, .contact-form textarea {
+        width: 100%;
+        padding: 12px 15px;
+        margin-bottom: 15px;
+        border-radius: var(--border-radius-small);
+        border: 1px solid #ccc;
+        font-size: 1em;
+    }
+    .contact-form textarea { resize: vertical; min-height: 120px; }
+    .contact-form button {
+        background-color: var(--secondary-color);
+        color: var(--text-white);
+        border: none;
+        padding: 12px 25px;
+        border-radius: var(--border-radius-small);
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .contact-form button:hover { background-color: #00b04a; transform: translateY(-2px); }
+
+    /* Footer */
+    .footer {
+        background-color: var(--primary-color);
+        color: var(--text-white);
+        text-align: center;
+        padding: 2em 0;
+        margin-top: 4em;
+        border-top-left-radius: var(--border-radius-large);
+        border-top-right-radius: var(--border-radius-large);
+        font-size: 1em;
+    }
+
+    /* Responsive */
+    @media(max-width:768px){
+        .contact-container { flex-direction: column; align-items: center; }
+    }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+    <a href="mediflow.html" class="logo">
+        <img src="https://img.icons8.com/color/48/000000/medical-doctor.png" alt="Icon"> MediFlow
+    </a>
+</div>
+
+<h2 class="page-title">Contact Us</h2>
+
+<div class="contact-container">
+
+    <!-- Contact Information -->
+    <div class="contact-card">
+        <h3>Get in Touch</h3>
+        <p>If you have any questions, need assistance, or want to schedule an appointment, reach out to us!</p>
+        <ul>
+            <li><strong>Phone:</strong> +91 9172516585</li>
+            <li><strong>Email:</strong> support@mediflow.com</li>
+            <li><strong>Address:</strong> 123 MediFlow St, Ichalkaranji, Maharashtra, India</li>
+        </ul>
+        <p>Find our nearest hospital location on the map below:</p>
+        <div class="map-wrapper">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3911.123456789!2d74.4600!3d16.7000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bbf6d7b7e8e4b7d%3A0x3c7e0f3e6b7e0f3e!2sIchalkaranji%2C%20Maharashtra%20416115!5e0!3m2!1sen!2sin!4v1616161616161!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="contact-card">
+        <h3>Send Us a Message</h3>
+        <form class="contact-form">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Email Address" required>
+            <input type="text" name="subject" placeholder="Subject" required>
+            <textarea name="message" placeholder="Your Message..." required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+
+</div>
+
+<div class="footer">
+    <p>&copy; 2025 MediFlow Project. Innovating Health, Empowering Lives.</p>
+</div>
+
+</body>
+</html>

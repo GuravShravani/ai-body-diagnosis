@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctor & Health Specialists - MediFlow</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin:0; padding:0;
+        background: #f0f8ff;
+    }
+    .navbar {
+        background-color: #1a73e8;
+        color: white;
+        padding: 15px 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 18px;
+    }
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        margin-left: 20px;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    h2 {
+        color: #1a73e8;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #1a73e8;
+        color: white;
+    }
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+    select, input[type=checkbox], button {
+        margin: 15px 0;
+        padding: 8px 10px;
+        font-size: 16px;
+    }
+    .available {
+        color: green;
+        font-weight: bold;
+    }
+    .unavailable {
+        color: red;
+        font-weight: bold;
+    }
+    button.update-btn {
+        padding: 6px 12px;
+        background-color: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    button.update-btn:hover {
+        background-color: #155bb5;
+    }
+</style>
+</head>
+<body>
+<div class="navbar">
+    <div>MediFlow</div>
+    <div>
+        <a href="index.html">Home</a>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Health Specialists Availability in Maharashtra</h2>
+
+    <label>
+        Show only available doctors/specialists:
+        <input type="checkbox" id="availableFilter">
+    </label>
+
+    <table id="doctorTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Specialization</th>
+                <th>Hospital/Clinic</th>
+                <th>Contact</th>
+                <th>Status</th>
+                <th>Update Availability</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Doctor rows will be populated via JS -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+let doctors = [
+    {name:"Dr. B.C. Kalmath", specialization:"Interventional Cardiologist", hospital:"Bombay Hospital, Mumbai", contact:"8591282831", available:true},
+    {name:"Dr. Satyavan Sharma", specialization:"Cardiology", hospital:"Bombay Hospital, Mumbai", contact:"Not listed", available:false},
+    {name:"Dr. Anil Sharma", specialization:"Cardiology", hospital:"Bombay Hospital, Mumbai", contact:"Not listed", available:true},
+    {name:"Dr. R.D. Nagpal", specialization:"Orthopedics", hospital:"Jaslok Hospital & Research Centre, Mumbai", contact:"022-66573200", available:true},
+    {name:"Dr. Deepak Sadarangani", specialization:"Oncology", hospital:"Jaslok Hospital & Research Centre, Mumbai", contact:"022-66573333", available:false},
+    {name:"Dr. Amit Desai", specialization:"Psychiatry", hospital:"Gupta Polyclinic, Mumbai", contact:"022-23636426", available:true},
+    {name:"Dr. Tanaz Mirza", specialization:"Dentistry", hospital:"Nicholson Dental Clinic, Mumbai", contact:"022-22189902", available:true},
+    {name:"Dr. Arun Venkatraman", specialization:"Dentistry", hospital:"Doctors Centre, Mumbai", contact:"022-23649882", available:false},
+    {name:"Dr. Phiroze Patel", specialization:"Oncology", hospital:"Jaslok Hospital & Research Centre, Mumbai", contact:"022-66573200", available:true},
+    {name:"Dr. Atul Ursekar", specialization:"Orthopedics", hospital:"Jaslok Hospital & Research Centre, Mumbai", contact:"022-66573333", available:true},
+    {name:"Dr. Vikas Dhanorkar", specialization:"Pediatrics", hospital:"Aditya Birla Memorial Hospital, Pune", contact:"9765910072", available:true},
+    {name:"Dr. Mayank Gadkari", specialization:"Pediatrics", hospital:"Aditya Birla Memorial Hospital, Pune", contact:"9049552345", available:true},
+    {name:"Dr. Pramila Bambale", specialization:"Cardiology", hospital:"Care Multispeciality Hospital, Pune", contact:"8888205884", available:false},
+    {name:"Dr. Amol Agarwal", specialization:"Cardiology", hospital:"Shwas Multispeciality Hospital, Pune", contact:"9890023940", available:true},
+    {name:"Dr. Richa Patil", specialization:"Dietician", hospital:"Wellness Clinic, Pune", contact:"9876543210", available:true},
+    {name:"Dr. Sneha Deshmukh", specialization:"Nutritionist", hospital:"Healthy Life Center, Mumbai", contact:"9123456780", available:true},
+    {name:"Dr. Aarav Joshi", specialization:"Fitness & Rehab", hospital:"FitHealth Gym Clinic, Nagpur", contact:"9988776655", available:false},
+    {name:"Dr. Meera Kulkarni", specialization:"Fitness Coach", hospital:"BodyWell Clinic, Pune", contact:"9765432109", available:true},
+    {name:"Dr. Rahul Sawant", specialization:"Dietician", hospital:"Nutrition Hub, Mumbai", contact:"9001122334", available:false},
+    {name:"Dr. Priya Khandelwal", specialization:"Fitness & Diet Specialist", hospital:"Vibrant Health, Pune", contact:"9023456781", available:true}
+];
+
+// Populate table
+function populateTable(filterAvailable=false){
+    const tbody = document.querySelector("#doctorTable tbody");
+    tbody.innerHTML = "";
+    doctors.forEach((doc, index)=>{
+        if(filterAvailable && !doc.available) return;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${doc.name}</td>
+            <td>${doc.specialization}</td>
+            <td>${doc.hospital}</td>
+            <td>${doc.contact}</td>
+            <td class="${doc.available ? 'available' : 'unavailable'}">${doc.available ? 'Available' : 'Unavailable'}</td>
+            <td><button class="update-btn" onclick="toggleAvailability(${index})">Toggle</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Toggle availability
+function toggleAvailability(index){
+    doctors[index].available = !doctors[index].available;
+    populateTable(document.getElementById("availableFilter").checked);
+}
+
+// Initial population
+populateTable();
+
+// Filter checkbox event
+document.getElementById("availableFilter").addEventListener("change", function(){
+    populateTable(this.checked);
+});
+</script>
+</body>
+</html>

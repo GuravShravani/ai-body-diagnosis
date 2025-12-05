@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Medical Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .header-controls button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s;
+        }
+        .header-controls button:hover {
+            background-color: #c82333;
+        }
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .data-item {
+            background-color: #e9f5ff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .data-item h3 {
+            margin: 0 0 10px;
+            font-size: 1em;
+            color: #34495e;
+        }
+        .data-item p {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #007bff;
+            margin: 0;
+        }
+        .data-item small {
+            font-size: 0.8em;
+            color: #777;
+        }
+        .mode-toggle {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .mode-toggle button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 0 5px;
+            transition: background-color 0.2s;
+        }
+        .mode-toggle button:hover {
+            background-color: #0056b3;
+        }
+        .mode-toggle button.active {
+            background-color: #28a745;
+        }
+
+        .manual-input, .prediction-section {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-group input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .form-actions {
+            text-align: center;
+        }
+        .form-actions button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s;
+        }
+        .form-actions button:hover {
+            background-color: #0056b3;
+        }
+        .prediction-section h3 {
+            text-align: center;
+            color: #28a745;
+            margin-top: 0;
+        }
+        .prediction-section p {
+            font-size: 1.1em;
+            text-align: center;
+            color: #555;
+        }
+        .message-area {
+            background-color: #e2e3e5;
+            color: #383d41;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            text-align: center;
+            display: none; /* Hidden by default */
+        }
+        .message-area.success { background-color: #d4edda; color: #155724; }
+        .message-area.error { background-color: #f8d7da; color: #721c24; }
+        .spinner {
+            border: 4px solid rgba(0, 123, 255, 0.1);
+            border-left-color: #007bff;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-controls">
+            <h1 id="welcomeMessage">Welcome to Dashboard</h1>
+            <button id="chat">chatbot</button>
+            <button id="list">symptoms</button>
+            <button id="doctor">doctor</button>
+            <button id="logoutBtn">Logout</button>
+            
+        </div>
+
+        <div class="mode-toggle">
+            <button id="liveModeBtn" class="active">Live Data (ESP32)</button>
+            <button id="manualModeBtn">Manual Input</button>
+        </div>
+
+        <div id="liveDataSection">
+            <h2>Live Sensor Readings</h2>
+            <div class="spinner" id="loadingSpinner"></div>
+            <div id="noDataMessage" class="message-area">Waiting for data from ESP32...</div>
+            <div class="data-grid" id="sensorDataDisplay">
+                <div class="data-item">
+                    <h3>Heart Rate</h3>
+                    <p id="bpmValue">--</p>
+                    <small>BPM</small>
+                </div>
+                <div class="data-item">
+                    <h3>SpO₂</h3>
+                    <p id="spo2Value">--</p>
+                    <small>%</small>
+                </div>
+                <div class="data-item">
+                    <h3>Temperature</h3>
+                    <p id="tempValue">--</p>
+                    <small>°C</small>
+                </div>
+                <div class="data-item">
+                    <h3>GSR</h3>
+                    <p id="gsrValue">--</p>
+                    <small>ADC Value</small>
+                </div>
+            </div>
+        </div>
+
+        <div id="manualInputSection" style="display:none;">
+            <h2>Manual Data Input</h2>
+            <div class="manual-input">
+                <form id="manualPredictionForm">
+                    <div class="form-group">
+                        <label for="manualBPM">Heart Rate (BPM):</label>
+                        <input type="number" id="manualBPM" min="30" max="200" value="75">
+                    </div>
+                    <div class="form-group">
+                        <label for="manualSpO2">SpO₂ (%):</label>
+                        <input type="number" id="manualSpO2" min="70" max="100" step="0.1" value="98.0">
+                    </div>
+                    <div class="form-group">
+                        <label for="manualTemp">Temperature (°C):</label>
+                        <input type="number" id="manualTemp" min="30" max="45" step="0.1" value="36.5">
+                    </div>
+                    <div class="form-group">
+                        <label for="manualGSR">GSR (ADC):</label>
+                        <input type="number" id="manualGSR" min="0" max="4095" value="1000">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" id="getManualPredictionBtn">Get Prediction</button>
+                    </div>
+                </form>
+                <div id="manualMessage" class="message-area"></div>
+            </div>
+        </div>
+
+        <div id="predictionSection" class="prediction-section" style="display:none;">
+            <h2>Prediction Result</h2>
+            <h3>Predicted Diagnosis: <span id="predictedDisease">N/A</span></h3>
+            <p id="predictionRationale"></p>
+        </div>
+        <div id="overallMessage" class="message-area"></div>
+    </div>
+
+    <script>
+        // --- Configuration ---
+        const ESP32_IP_ADDRESS = '192.168.137.190'; // <--- IMPORTANT: Change this to your ESP32's IP!
+        const LIVE_DATA_POLL_INTERVAL = 3000; // Poll every 3 seconds
+        
+        // --- DOM Elements ---
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const chat = document.getElementById('chat');
+        const liveModeBtn = document.getElementById('liveModeBtn');
+        const manualModeBtn = document.getElementById('manualModeBtn');
+        const liveDataSection = document.getElementById('liveDataSection');
+        const manualInputSection = document.getElementById('manualInputSection');
+
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const noDataMessage = document.getElementById('noDataMessage');
+        const bpmValue = document.getElementById('bpmValue');
+        const spo2Value = document.getElementById('spo2Value');
+        const tempValue = document.getElementById('tempValue');
+        const gsrValue = document.getElementById('gsrValue');
+
+        const manualPredictionForm = document.getElementById('manualPredictionForm');
+        const getManualPredictionBtn = document.getElementById('getManualPredictionBtn');
+        const manualBPM = document.getElementById('manualBPM');
+        const manualSpO2 = document.getElementById('manualSpO2');
+        const manualTemp = document.getElementById('manualTemp');
+        const manualGSR = document.getElementById('manualGSR');
+        const manualMessage = document.getElementById('manualMessage');
+
+        const predictionSection = document.getElementById('predictionSection');
+        const predictedDisease = document.getElementById('predictedDisease');
+        const predictionRationale = document.getElementById('predictionRationale');
+        const overallMessage = document.getElementById('overallMessage');
+
+        // --- Global State ---
+        let liveDataInterval = null;
+        let isManualMode = false;
+
+        // --- Utility Functions ---
+        function showMessage(msg, type = 'info', targetElement = overallMessage) {
+            targetElement.textContent = msg;
+            targetElement.className = `message-area ${type}`;
+            targetElement.style.display = 'block';
+            setTimeout(() => {
+                targetElement.style.display = 'none';
+            }, 5000);
+        }
+
+        function clearDataDisplay() {
+            bpmValue.textContent = '--';
+            spo2Value.textContent = '--';
+            tempValue.textContent = '--';
+            gsrValue.textContent = '--';
+            predictedDisease.textContent = 'N/A';
+            predictionRationale.textContent = '';
+            predictionSection.style.display = 'none';
+            noDataMessage.style.display = 'block';
+            loadingSpinner.style.display = 'none';
+        }
+
+        // --- Diagnostic Logic (Client-Side) ---
+        function getDiagnosisFromSensorData(bpm, spo2, temperature, gsr) {
+            let disease = "Undetermined";
+            let rationale = "Insufficient or unclear data for a specific diagnosis.";
+
+            // Ensure all values are numbers
+            if ([bpm, spo2, temperature, gsr].some(v => v === null || v === undefined || isNaN(v))) {
+                return { predictedDisease: "Undetermined", predictionRationale: "check connections" };
+            }
+
+            if (bpm > 100 && spo2 < 94 && temperature > 37.5) {
+                disease = "Possible Infection (e.g., Fever, Flu)";
+                rationale = `Elevated heart rate (${bpm} BPM), low oxygen saturation (${spo2}%), and fever (${temperature}°C) suggest a possible infection.`;
+            } else if (bpm > 110 && gsr > 700) { // Higher GSR might indicate stress/anxiety
+                disease = "Anxiety/Stress Reaction";
+                rationale = `Elevated heart rate (${bpm} BPM) combined with high skin conductance (${gsr} ADC) can indicate stress or anxiety.`;
+            } else if (spo2 < 90) {
+                disease = "Hypoxemia (Low Oxygen)";
+                rationale = `Critically low oxygen saturation (${spo2}%) indicates hypoxemia, which needs immediate attention.`;
+            } else if (temperature > 38.5) {
+                disease = "High Fever";
+                rationale = `Very high temperature (${temperature}°C) indicates a significant fever.`;
+            } else if (bpm < 50) {
+                disease = "Bradycardia (Slow Heart Rate)";
+                rationale = `Abnormally slow heart rate (${bpm} BPM) with normal oxygen levels suggests bradycardia.`;
+            } else if (spo2 >= 95 && bpm >= 60 && bpm <= 90 && temperature >= 36.0 && temperature <= 37.2 && gsr >= 300 && gsr <= 600) {
+                disease = "Healthy / Normal";
+                rationale = `All vital signs (${bpm} BPM, ${spo2}%, ${temperature}°C, ${gsr} ADC) are within normal ranges.`;
+            } else {
+                disease = "Needs Further Review";
+                rationale = "The current combination of sensor readings does not fit a clear pattern. A doctor's review is recommended.";
+            }
+
+            return { predictedDisease: disease, predictionRationale: rationale };
+        }
+
+        // --- Live Data Polling ---
+        function startLiveDataPolling() {
+            if (liveDataInterval) {
+                clearInterval(liveDataInterval);
+            }
+            liveDataInterval = setInterval(fetchLiveData, LIVE_DATA_POLL_INTERVAL);
+            fetchLiveData(); // Fetch immediately
+        }
+
+        function stopLiveDataPolling() {
+            if (liveDataInterval) {
+                clearInterval(liveDataInterval);
+                liveDataInterval = null;
+            }
+        }
+
+        async function fetchLiveData() {
+            if (isManualMode) return; // Don't fetch if in manual mode
+
+            loadingSpinner.style.display = 'block';
+            noDataMessage.style.display = 'none';
+            overallMessage.style.display = 'none'; // Clear general messages
+
+            try {
+                const response = await fetch(`http://${ESP32_IP_ADDRESS}/data`); // Assuming ESP32 serves data at /data
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("Received data from ESP32:", data);
+
+                // Update UI
+                bpmValue.textContent = data.bpm ? data.bpm.toFixed(0) : '--';
+                spo2Value.textContent = data.spo2 ? data.spo2.toFixed(1) : '--';
+                tempValue.textContent = data.temperature ? data.temperature.toFixed(1) : '--';
+                gsrValue.textContent = data.gsr_avg ? data.gsr_avg.toFixed(0) : '--';
+
+                // Perform client-side prediction
+                const diagnosisResult = getDiagnosisFromSensorData(
+                    data.bpm,
+                    data.spo2,
+                    data.temperature,
+                    data.gsr_avg
+                );
+                predictedDisease.textContent = diagnosisResult.predictedDisease;
+                predictionRationale.textContent = diagnosisResult.predictionRationale;
+                predictionSection.style.display = 'block';
+                
+                loadingSpinner.style.display = 'none';
+            } catch (error) {
+                console.error("Error fetching ESP32 data:", error);
+                showMessage(`Could not connect to ESP32 at ${ESP32_IP_ADDRESS} or data error: ${error.message}`, 'error');
+                loadingSpinner.style.display = 'none';
+                noDataMessage.style.display = 'block'; // Re-show 'waiting for data'
+                clearDataDisplay(); // Clear old values
+            }
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Basic Login Check
+            const token = localStorage.getItem('token');
+            const userName = localStorage.getItem('userName');
+            if (!token || !userName) {
+                showMessage('You are not logged in. Redirecting to login...', 'error');
+                setTimeout(() => window.location.href = 'login.html', 2000); // Redirect to login page
+                return;
+            }
+            welcomeMessage.textContent = `Welcome, Ms. ${userName}`;
+
+            // Logout Functionality
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('token');
+                localStorage.removeItem('userName');
+                showMessage('Logged out successfully.', 'info');
+                setTimeout(() => window.location.href = 'index.html', 1000); // Assuming index.html is the landing page
+            });
+
+            // Mode Toggle Buttons
+            liveModeBtn.addEventListener('click', () => {
+                isManualMode = false;
+                liveModeBtn.classList.add('active');
+                manualModeBtn.classList.remove('active');
+                liveDataSection.style.display = 'block';
+                manualInputSection.style.display = 'none';
+                predictionSection.style.display = 'none'; // Hide prediction until data comes
+                clearDataDisplay(); // Clear manual input display artifacts
+                startLiveDataPolling();
+                overallMessage.style.display = 'none'; // Clear any old messages
+                noDataMessage.style.display = 'block'; // Show waiting message for live data
+            });
+            document.getElementById('chat').addEventListener('click', () => {
+    window.location.href = 'chatbot/index.html';
+});
+document.getElementById('doctor').addEventListener('click', () => {
+    window.location.href = 'doctor.html';
+});
+document.getElementById('list').addEventListener('click', () => {
+    window.location.href = 'list.html';
+});
+
+            manualModeBtn.addEventListener('click', () => {
+                isManualMode = true;
+                manualModeBtn.classList.add('active');
+                liveModeBtn.classList.remove('active');
+                manualInputSection.style.display = 'block';
+                liveDataSection.style.display = 'none';
+                stopLiveDataPolling(); // Stop live polling
+                clearDataDisplay(); // Clear live data display
+                overallMessage.style.display = 'none'; // Clear any old messages
+                predictionSection.style.display = 'none'; // Hide prediction initially for manual input
+            });
+
+            // Manual Prediction Form Submission
+            /*manualPredictionForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const manualData = {
+                    bpm: parseFloat(manualBPM.value),
+                    spo2: parseFloat(manualSpO2.value),
+                    temperature: parseFloat(manualTemp.value),
+                    gsr_avg: parseFloat(manualGSR.value)
+                };
+
+                const diagnosisResult = getDiagnosisFromSensorData(
+                    manualData.bpm,
+                    manualData.spo2,
+                    manualData.temperature,
+                    manualData.gsr_avg
+                );
+                predictedDisease.textContent = diagnosisResult.predictedDisease;
+                predictionRationale.textContent = diagnosisResult.predictionRationale;
+                predictionSection.style.display = 'block';
+                showMessage('Prediction based on manual inputs.', 'success', manualMessage);
+            });*/
+            manualPredictionForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const manualData = {
+        bpm: parseFloat(manualBPM.value),
+        spo2: parseFloat(manualSpO2.value),
+        temperature: parseFloat(manualTemp.value),
+        gsr_avg: parseFloat(manualGSR.value)
+    };
+
+    const diagnosisResult = getDiagnosisFromSensorData(
+        manualData.bpm,
+        manualData.spo2,
+        manualData.temperature,
+        manualData.gsr_avg
+    );
+
+    predictedDisease.textContent = diagnosisResult.predictedDisease;
+    predictionRationale.textContent = diagnosisResult.predictionRationale;
+    predictionSection.style.display = 'block';
+    showMessage('Prediction based on manual inputs.', 'success', manualMessage);
+
+    // --- New Popup Suggestion Message ---
+    let suggestion = "";
+    switch (diagnosisResult.predictedDisease) {
+        case "Hypoxemia (Low Oxygen)":
+            suggestion = "⚠️ Low oxygen detected! Try deep breathing or use supplemental oxygen if prescribed.";
+            break;
+        case "Possible Infection (e.g., Fever, Flu)":
+            suggestion = "🩺 You might have an infection. Stay hydrated and consult a doctor if symptoms persist.";
+            break;
+        case "Anxiety/Stress Reaction":
+            suggestion = "😌 Try relaxation exercises, deep breathing, or short breaks to reduce stress.";
+            break;
+        case "High Fever":
+            suggestion = "🌡️ High temperature detected! Rest, drink fluids, and seek medical help if above 39°C.";
+            break;
+        case "Bradycardia (Slow Heart Rate)":
+            suggestion = "❤️ Low heart rate. If you feel dizzy or weak, seek medical attention immediately.";
+            break;
+        case "Healthy / Normal":
+            suggestion = "✅ All vitals normal! Keep maintaining a healthy routine.";
+            break;
+        default:
+            suggestion = "ℹ️ Please consult a doctor for further diagnosis.";
+    }
+
+    // Show popup alert with suggestion
+    alert(`${diagnosisResult.predictedDisease}\n\n${suggestion}`);
+});
+
+            // Initial State
+            clearDataDisplay();
+            startLiveDataPolling(); // Start polling ESP32 on page load
+        });
+    </script>
+</body>
+</html>

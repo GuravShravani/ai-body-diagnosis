@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - MediFlow Kiosk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a73e8; /* Google Blue */
+            --secondary-color: #00c853; /* Vibrant Green for accents */
+            --background-light: #f7f9fc; /* Very light grey-blue for main background */
+            --background-card: #ffffff;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --text-white: #ffffff;
+            --border-radius-large: 15px;
+            --border-radius-small: 8px;
+            --shadow-light: 0 5px 25px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 35px rgba(0,0,0,0.12);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent scrollbar from background effects */
+            position: relative;
+        }
+
+        /* Background gradient circles - similar to hero section and login page */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            background: rgba(var(--primary-color), 0.05); /* Lighter primary color for background */
+            border-radius: 50%;
+            filter: blur(80px); /* Soft blur effect */
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::before {
+            top: 10%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+        }
+
+        body::after {
+            bottom: 15%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(var(--secondary-color), 0.05); /* Lighter secondary color */
+        }
+
+        .signup-container {
+            background-color: var(--background-card);
+            padding: 40px;
+            border-radius: var(--border-radius-large);
+            box-shadow: var(--shadow-light);
+            width: 100%;
+            max-width: 450px; /* Slightly wider for more fields */
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .signup-container:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4em; /* Slightly larger for emphasis */
+            color: var(--primary-color);
+            margin-bottom: 35px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px; /* Slightly wider underline */
+            height: 3px;
+            background-color: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.95em;
+        }
+
+        .form-group input {
+            width: calc(100% - 24px); /* Account for padding */
+            padding: 14px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: var(--border-radius-small);
+            font-size: 1em;
+            color: var(--text-dark);
+            background-color: var(--background-light);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(var(--primary-color), 0.2);
+            background-color: var(--background-card);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--secondary-color); /* Using secondary color for signup action */
+            color: var(--text-white);
+            border: none;
+            border-radius: var(--border-radius-small);
+            font-size: 1.15em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            margin-top: 15px; /* More space above button */
+            box-shadow: 0 5px 20px rgba(var(--secondary-color), 0.25);
+        }
+
+        .btn-submit:hover {
+            background-color: #00b04a; /* Slightly darker secondary */
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(var(--secondary-color), 0.35);
+        }
+
+        .link-text {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.95em;
+            color: var(--text-light);
+        }
+
+        .link-text a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .link-text a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 500px) {
+            .signup-container {
+                margin: 20px;
+                padding: 30px 25px;
+                max-width: 90%; /* Adjust for smaller screens */
+            }
+            h2 {
+                font-size: 2em;
+                margin-bottom: 30px;
+            }
+            .form-group input {
+                padding: 12px 10px;
+            }
+            .btn-submit {
+                font-size: 1.05em;
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h2>Join MediFlow Today</h2>
+        <form id="signup-form">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Your professional email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Create Password</label>
+                <input type="password" id="password" placeholder="Minimum 8 characters" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" placeholder="Re-enter your password" required>
+            </div>
+            <button type="submit" class="btn-submit">Register Account</button>
+        </form>
+        <div class="link-text">
+            Already a member? <a href="login.html">Login to your account</a>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:5000/api/auth'; // Backend auth endpoint
+
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${BASE_URL}/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name, email, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(data.message + '\nRedirecting to login...');
+                    // Store token and user info (optional for signup, but consistent)
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('userName', data.user.name);
+                    // It's generally better practice to redirect to login after signup
+                    // so the user explicitly logs in with their new credentials.
+                    window.location.href = 'login.html';
+                } else {
+                    alert('Sign Up Failed: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error during signup:', error);
+                alert('An error occurred during sign up. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

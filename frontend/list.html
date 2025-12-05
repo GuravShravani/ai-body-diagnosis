@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symptom List with Solutions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #333;
+            overflow: hidden;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            text-align: center;
+        }
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+        .search-container input[type=text] {
+            padding: 8px;
+            border: none;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+        .search-container button {
+            padding: 8px 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .search-container button:hover {
+            background: #0056b3;
+        }
+        .container {
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .symptom-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .symptom-item {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: #333;
+            font-size: 1.1em;
+            cursor: pointer; /* Indicate it's clickable */
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Center text vertically and horizontally */
+            text-align: center;
+            min-height: 60px; /* Ensure consistent height */
+        }
+        .symptym-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Solution Overlay/Modal Styling */
+        .solution-overlay {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay on top of everything */
+            z-index: 1000; /* High z-index to be on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if content is too long */
+            background-color: rgba(0,0,0,0.6); /* Black background with opacity */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            backdrop-filter: blur(5px); /* Optional blur effect */
+        }
+
+        .solution-content {
+            background-color: #fefefe;
+            margin: 10% auto; /* 10% from the top and centered */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 80%; /* Could be responsive */
+            max-width: 600px;
+            position: relative;
+        }
+
+        .solution-content h2 {
+            color: #007bff;
+            margin-top: 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .solution-content p {
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #333;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <a href="indianwebpage.html">check symptoms and suggestion</a> <!-- Link to your main page -->
+        <div class="search-container">
+            <input type="text" placeholder="Search symptoms..." id="searchInput">
+            <button onclick="searchSymptoms()">Search</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Common Symptoms and Basic Advice</h1>
+        
+        <ul class="symptom-list" id="symptomList">
+            <!-- Each li now has an onclick handler -->
+            <li class="symptom-item" data-symptom="Fever">Fever</li>
+            <li class="symptom-item" data-symptom="Cough">Cough</li>
+            <li class="symptom-item" data-symptom="Headache">Headache</li>
+            <li class="symptom-item" data-symptom="Fatigue">Fatigue</li>
+            <li class="symptom-item" data-symptom="Sore Throat">Sore Throat</li>
+            <li class="symptom-item" data-symptom="Muscle Pain">Muscle Pain</li>
+            <li class="symptom-item" data-symptom="Nausea">Nausea</li>
+            <li class="symptom-item" data-symptom="Vomiting">Vomiting</li>
+            <li class="symptom-item" data-symptom="Diarrhea">Diarrhea</li>
+            <li class="symptom-item" data-symptom="Shortness of Breath">Shortness of Breath</li>
+            <li class="symptom-item" data-symptom="Chest Pain">Chest Pain</li>
+            <li class="symptom-item" data-symptom="Abdominal Pain">Abdominal Pain</li>
+            <li class="symptom-item" data-symptom="Dizziness">Dizziness</li>
+            <li class="symptom-item" data-symptom="Rash">Rash</li>
+            <li class="symptom-item" data-symptom="Joint Pain">Joint Pain</li>
+            <li class="symptom-item" data-symptom="Swelling">Swelling</li>
+            <li class="symptom-item" data-symptom="Numbness or Tingling">Numbness or Tingling</li>
+            <li class="symptom-item" data-symptom="Loss of Taste/Smell">Loss of Taste/Smell</li>
+            <li class="symptom-item" data-symptom="Chills">Chills</li>
+            <li class="symptom-item" data-symptom="Constipation">Constipation</li>
+            <li class="symptom-item" data-symptom="Heart Palpitations">Heart Palpitations</li>
+            <li class="symptom-item" data-symptom="Blurred Vision">Blurred Vision</li>
+            <li class="symptom-item" data-symptom="Difficulty Swallowing">Difficulty Swallowing</li>
+            <li class="symptom-item" data-symptom="Weight Loss (unexplained)">Weight Loss (unexplained)</li>
+            <li class="symptom-item" data-symptom="Insomnia">Insomnia</li>
+        </ul>
+    </div>
+
+    <!-- Solution Overlay -->
+    <div id="solutionOverlay" class="solution-overlay">
+        <div class="solution-content">
+            <span class="close-button" onclick="closeSolution()">&times;</span>
+            <h2 id="solutionSymptomTitle"></h2>
+            <div id="solutionText"></div>
+        </div>
+    </div>
+
+    <script>
+        // Store symptom solutions in an object for easy lookup
+        const symptomSolutions = {
+            "fever": {
+                title: "Fever Management",
+                text: "Rest, drink plenty of fluids, and take over-the-counter fever reducers like paracetamol or ibuprofen if needed. Consult a doctor if fever is high (over 103°F or 39.4°C), lasts more than 3 days, or is accompanied by severe symptoms."
+            },
+            "cough": {
+                title: "Cough Relief",
+                text: "Drink warm liquids (like honey and lemon water), use cough drops, and consider a humidifier. Avoid irritants like smoke. See a doctor if cough is persistent, severe, produces colored phlegm, or causes difficulty breathing."
+            },
+            "headache": {
+                title: "Headache Relief",
+                text: "Rest in a quiet, dark room, apply a cold compress to your forehead, and take over-the-counter pain relievers. Ensure adequate hydration. Seek medical advice if headaches are sudden and severe, accompanied by fever, stiff neck, confusion, or visual changes."
+            },
+            "fatigue": {
+                title: "Managing Fatigue",
+                text: "Ensure adequate sleep, maintain a balanced diet, stay hydrated, and incorporate light exercise. Reduce stress. Consult a doctor if fatigue is persistent, debilitating, and not relieved by rest, as it could indicate an underlying condition."
+            },
+            "sore throat": {
+                title: "Sore Throat Care",
+                text: "Gargle with warm salt water, drink warm liquids (tea with honey), use throat lozenges. Avoid irritants. See a doctor if sore throat is severe, accompanied by high fever, difficulty swallowing, or swollen glands."
+            },
+            "muscle pain": {
+                title: "Muscle Pain Relief",
+                text: "Rest the affected muscle, apply ice for acute injuries (first 48 hours) then heat, stretch gently, and consider over-the-counter pain relievers. Consult a doctor if pain is severe, persistent, or accompanied by swelling/redness."
+            },
+            "nausea": {
+                title: "Nausea Relief",
+                text: "Eat bland foods, drink clear fluids in small sips, avoid fatty or spicy foods. Ginger can help. Seek medical attention if nausea is persistent, severe, or accompanied by severe pain, high fever, or dehydration."
+            },
+            "vomiting": {
+                title: "Managing Vomiting",
+                text: "Rest your stomach for a few hours, then slowly reintroduce clear fluids (water, broth). Avoid solid food until vomiting stops. Seek medical advice if vomiting is severe, frequent, lasts more than 24 hours, or you show signs of dehydration."
+            },
+            "diarrhea": {
+                title: "Diarrhea Care",
+                text: "Drink plenty of fluids (water, oral rehydration solutions) to prevent dehydration. Eat bland foods (BRAT diet: bananas, rice, applesauce, toast). Avoid dairy, fatty, and spicy foods. Consult a doctor if severe, bloody, or lasts more than a few days."
+            },
+            "shortness of breath": {
+                title: "Shortness of Breath - IMPORTANT",
+                text: "<strong>Seek immediate medical attention if shortness of breath is sudden, severe, or accompanied by chest pain, dizziness, or fainting.</strong> For mild, temporary shortness of breath, rest and try to relax. Avoid strenuous activity."
+            },
+            "chest pain": {
+                title: "Chest Pain - URGENT",
+                text: "<strong>Chest pain can be a sign of a serious condition like a heart attack. Seek immediate emergency medical help if you experience sudden, severe chest pain, especially if it spreads to your arm, jaw, or back, or is accompanied by shortness of breath, sweating, or nausea.</strong>"
+            },
+            "abdominal pain": {
+                title: "Abdominal Pain Advice",
+                text: "For mild pain, try a heating pad, rest, and bland foods. Avoid irritating foods. <strong>Seek immediate medical attention if abdominal pain is severe, sudden, accompanied by fever, bloody stools, vomiting, or if the abdomen is tender to touch.</strong>"
+            },
+            "dizziness": {
+                title: "Managing Dizziness",
+                text: "Sit or lie down immediately to prevent falls. Drink water to stay hydrated. Avoid sudden movements. Consult a doctor if dizziness is severe, persistent, or accompanied by headache, weakness, or hearing loss."
+            },
+            "rash": {
+                title: "Rash Care",
+                text: "Keep the area clean and dry. Avoid scratching. Apply a cool compress or an over-the-counter hydrocortisone cream if advised. See a doctor if the rash is widespread, painful, blistering, or accompanied by fever or severe itching."
+            },
+            "joint pain": {
+                title: "Joint Pain Relief",
+                text: "Rest the joint, apply ice for acute pain, heat for chronic stiffness. Gentle exercise can help. Over-the-counter pain relievers can provide relief. Consult a doctor if pain is severe, persistent, accompanied by swelling, redness, or difficulty moving the joint."
+            },
+            "swelling": {
+                title: "Managing Swelling",
+                text: "Elevate the swollen area, apply ice, and consider compression if appropriate (e.g., elastic bandage). Avoid prolonged standing. Seek medical attention if swelling is sudden, severe, painful, or unexplained."
+            },
+            "numbness or tingling": {
+                title: "Numbness or Tingling Advice",
+                text: "If temporary (e.g., limb 'falling asleep'), try to move and stretch. If numbness or tingling is persistent, severe, affects one side of the body, or is accompanied by weakness, dizziness, or vision changes, seek medical advice promptly."
+            },
+            "loss of taste/smell": {
+                title: "Loss of Taste/Smell",
+                text: "This can be a symptom of viral infections (like COVID-19) or other conditions. Consult a doctor if this symptom is new and persistent. Keep nasal passages clear and maintain good oral hygiene."
+            },
+            "chills": {
+                title: "Chills Management",
+                text: "Wrap yourself in blankets, drink warm fluids. Often accompanies fever. Consult a doctor if chills are severe, persistent, or accompanied by high fever or other concerning symptoms."
+            },
+            "constipation": {
+                title: "Constipation Relief",
+                text: "Increase fiber intake (fruits, vegetables, whole grains), drink plenty of water, and get regular physical activity. Avoid processed foods. If persistent, consider over-the-counter laxatives, but consult a doctor if chronic or severe."
+            },
+            "heart palpitations": {
+                title: "Heart Palpitations Advice",
+                text: "If you feel your heart racing or skipping beats, try to relax, breathe deeply, and avoid caffeine/alcohol. <strong>Seek medical attention if palpitations are frequent, persistent, or accompanied by chest pain, dizziness, or shortness of breath.</strong>"
+            },
+            "blurred vision": {
+                title: "Blurred Vision - Medical Attention Needed",
+                text: "<strong>Sudden or severe blurred vision can be a sign of a serious medical emergency (e.g., stroke, retinal detachment). Seek immediate medical help.</strong> For gradual changes, consult an ophthalmologist for evaluation."
+            },
+            "difficulty swallowing": {
+                title: "Difficulty Swallowing (Dysphagia) - Medical Advice",
+                text: "Eat soft foods, chew thoroughly, and take small bites. Drink fluids with meals. <strong>If difficulty swallowing is sudden, painful, or persistent, leading to weight loss, consult a doctor as it requires evaluation.</strong>"
+            },
+            "weight loss (unexplained)": {
+                title: "Unexplained Weight Loss - Consult a Doctor",
+                text: "Significant, unintentional weight loss can be a symptom of various underlying health conditions. It's important to consult a doctor for a thorough evaluation if you are losing weight without trying."
+            },
+            "insomnia": {
+                title: "Insomnia Management",
+                text: "Practice good sleep hygiene: maintain a regular sleep schedule, create a relaxing bedtime routine, avoid caffeine/alcohol before bed, and ensure a comfortable sleep environment. If persistent, consult a doctor for diagnosis and treatment options."
+            },
+            // Add more symptoms and their solutions here
+        };
+
+        // Event listener for symptom clicks
+        document.addEventListener('DOMContentLoaded', () => {
+            const symptomItems = document.querySelectorAll('.symptom-item');
+            symptomItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const symptom = item.dataset.symptom.toLowerCase(); // Get the symptom from data-symptom attribute
+                    showSolution(symptom);
+                });
+            });
+        });
+
+        function showSolution(symptomKey) {
+            const solution = symptomSolutions[symptomKey];
+            const solutionOverlay = document.getElementById('solutionOverlay');
+            const solutionSymptomTitle = document.getElementById('solutionSymptomTitle');
+            const solutionText = document.getElementById('solutionText');
+
+            if (solution) {
+                solutionSymptomTitle.textContent = solution.title;
+                solutionText.innerHTML = solution.text; // Use innerHTML to allow bold tags
+                solutionOverlay.style.display = 'flex'; // Use flex to center the content
+            } else {
+                solutionSymptomTitle.textContent = "Information Not Available";
+                solutionText.textContent = "No specific advice found for this symptom. Please consult a medical professional.";
+                solutionOverlay.style.display = 'flex';
+            }
+        }
+
+        function closeSolution() {
+            document.getElementById('solutionOverlay').style.display = 'none';
+        }
+
+        function searchSymptoms() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const symptomList = document.getElementById('symptomList');
+            const symptomItems = symptomList.getElementsByClassName('symptom-item');
+
+            for (let i = 0; i < symptomItems.length; i++) {
+                const symptomText = symptomItems[i].textContent.toLowerCase();
+
+                if (symptomText.includes(input)) {
+                    symptomItems[i].style.display = "";
+                } else {
+                    symptomItems[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
