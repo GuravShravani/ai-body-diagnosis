@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Healthcare Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<style>
+  body{
+    font-family:Inter,sans-serif;
+    margin:0;
+    padding:0;
+    background: url('https://images.unsplash.com/photo-1588776814546-2d0d979f51cf?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+    background-size: cover;
+    color:#333;
+  }
+  body::before{
+    content:'';
+    position:fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(255,255,255,0.95);
+    z-index:-1;
+  }
+
+  .container{
+    max-width:1100px;
+    margin:20px auto;
+    padding:20px;
+    border-radius:15px;
+  }
+
+  h1{
+    text-align:center;
+    color:#2c3e50;
+    text-shadow:1px 1px 2px #aaa;
+    position:sticky;
+    top:0;
+    background:rgba(255,255,255,0.9);
+    padding:10px 0;
+    z-index:10;
+  }
+
+  .card{
+    background: rgba(255,255,255,0.95);
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.2);
+    margin-bottom:20px;
+  }
+
+  h2{
+    color:#16a085;
+    margin-bottom:12px;
+    text-shadow:1px 1px 1px #ccc;
+  }
+
+  label{
+    display:block;
+    margin-top:8px;
+    font-weight:500;
+  }
+  input{
+    width:100%;
+    padding:10px;
+    margin-top:4px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:15px;
+  }
+
+  button{
+    padding:12px 20px;
+    margin-top:12px;
+    border:none;
+    border-radius:10px;
+    background: linear-gradient(90deg,#1abc9c,#16a085);
+    color:#fff;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  }
+  button:hover{
+    background: linear-gradient(90deg,#16a085,#1abc9c);
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:16px;
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
+  }
+  th,td{
+    padding:12px;
+    border:1px solid #ccc;
+    text-align:center;
+  }
+
+  .green{background: linear-gradient(to right, #d4edda, #a8e6a1);color:#155724;font-weight:600;}
+  .yellow{background: linear-gradient(to right, #fff3cd, #ffe08a);color:#856404;font-weight:600;}
+  .red{background: linear-gradient(to right, #f8d7da, #f39c9f);color:#721c24;font-weight:600;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>FullBody Healthcare Dashboard</h1>
+
+<div class="card">
+  <h2>Medical Range Reference</h2>
+  <table>
+    <thead>
+      <tr><th>Parameter</th><th>Official Range</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>BP Systolic</td><td>90-120 mmHg</td></tr>
+      <tr><td>BP Diastolic</td><td>60-80 mmHg</td></tr>
+      <tr><td>Oxygen Level</td><td>95-100 %</td></tr>
+      <tr><td>Temperature</td><td>36.1-37.2 °C</td></tr>
+      <tr><td>Heart Rate</td><td>60-100 bpm</td></tr>
+      <tr><td>Water Intake</td><td>1500-3000 ml/day</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h2>Enter Health Data</h2>
+  <label>Name<input type="text" id="name"></label>
+  <label>Age<input type="number" id="age"></label>
+  <label>Weight (kg)<input type="number" id="weight"></label>
+  <label>Region<input type="text" id="region"></label>
+  <label>Blood Group<input type="text" id="blood"></label>
+  <label>BP Systolic<input type="number" id="bp_sys" min="60" max="200"></label>
+  <label>BP Diastolic<input type="number" id="bp_dia" min="40" max="120"></label>
+  <label>Oxygen (%)<input type="number" id="oxygen" min="70" max="100"></label>
+  <label>Temperature (°C)<input type="number" id="temp" min="34" max="42"></label>
+  <label>Heart Rate (bpm)<input type="number" id="hr" min="40" max="180"></label>
+  <label>Water Intake (ml)<input type="number" id="water" min="500" max="5000"></label>
+  <button id="analyze">Analyze Health</button>
+</div>
+
+<div class="card">
+  <h2>Health Analysis</h2>
+  <table id="resultTable">
+    <thead><tr><th>Parameter</th><th>Value</th><th>Status</th><th>Recommendation</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <canvas id="pieChart" width="400" height="400"></canvas>
+</div>
+
+<div class="card">
+  <h2>Recommended Doctors</h2>
+  <table id="doctorTable">
+    <thead><tr><th>Name</th><th>Phone</th><th>Clinic/Hospital</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <button id="exportPDF">Export PDF</button>
+</div>
+
+</div>
+
+<script>
+const officialRanges = {
+  bp_sys:{low:90, high:120},
+  bp_dia:{low:60, high:80},
+  oxygen:{low:95, high:100},
+  temp:{low:36.1, high:37.2},
+  hr:{low:60, high:100},
+  water:{low:1500, high:3000}
+};
+
+const recommendations = {
+  bp_sys:'Maintain normal blood pressure; reduce salt and stress; consult cardiologist if high.',
+  bp_dia:'Maintain normal blood pressure; regular exercise and checkups recommended.',
+  oxygen:'Maintain oxygen level; if below normal consult pulmonologist.',
+  temp:'Monitor for fever; consult doctor if temperature > 38°C.',
+  hr:'Maintain normal heart rate; check for arrhythmia if abnormal.',
+  water:'Maintain adequate hydration.'
+};
+
+const doctors = [
+  {name:'Dr. Shashikant Patil', phone:'+91-9822165432', clinic:'Alliance Multispeciality Hospital'},
+  {name:'Dr. Priya Kulkarni', phone:'+91-9422301234', clinic:'Indira Gandhi General Hospital'},
+  {name:'Dr. Rajesh Lande', phone:'+91-9764019003', clinic:'Lande Hospital'},
+  {name:'Dr. Sunita Deshmukh', phone:'+91-9423209876', clinic:'Niramaya Hospital'},
+  {name:'Dr. Amit Jadhav', phone:'+91-94232484813', clinic:'Shraddha Surgical Hospital'}
+];
+
+function getStatus(param,value){
+  if(value < officialRanges[param].low) return 'low';
+  if(value > officialRanges[param].high) return 'high';
+  return 'normal';
+}
+function getColorClass(status){
+  if(status==='normal') return 'green';
+  if(status==='low') return 'yellow';
+  if(status==='high') return 'red';
+}
+let pieChartInstance = null;
+
+function analyze(){
+  const data = {
+    bp_sys: parseFloat(document.getElementById('bp_sys').value),
+    bp_dia: parseFloat(document.getElementById('bp_dia').value),
+    oxygen: parseFloat(document.getElementById('oxygen').value),
+    temp: parseFloat(document.getElementById('temp').value),
+    hr: parseFloat(document.getElementById('hr').value),
+    water: parseFloat(document.getElementById('water').value)
+  };
+
+  const tbody = document.querySelector('#resultTable tbody');
+  tbody.innerHTML='';
+  let counts={normal:0,low:0,high:0};
+
+  for(let key in data){
+    let status = getStatus(key,data[key]);
+    counts[status]++;
+    tbody.innerHTML += `<tr class='${getColorClass(status)}'><td>${key}</td><td>${data[key]}</td><td>${status}</td><td>${recommendations[key]}</td></tr>`;
+  }
+
+  const ctx = document.getElementById('pieChart').getContext('2d');
+  if(pieChartInstance) pieChartInstance.destroy();
+  pieChartInstance = new Chart(ctx,{
+    type:'doughnut',
+    data:{
+      labels:['Normal','Low','High'],
+      datasets:[{
+        data:[counts.normal,counts.low,counts.high],
+        backgroundColor:['#28a745','#ffc107','#dc3545'],
+        borderWidth:2,
+        hoverOffset:10
+      }]
+    },
+    options:{responsive:true,plugins:{legend:{position:'bottom'},title:{display:true,text:'Health Status Distribution',font:{size:16}}},animation:{animateScale:true,animateRotate:true}}
+  });
+
+  const dtbody=document.querySelector('#doctorTable tbody');
+  dtbody.innerHTML='';
+  doctors.forEach(d=>{
+    dtbody.innerHTML += `<tr><td>${d.name}</td><td>${d.phone}</td><td>${d.clinic}</td></tr>`;
+  });
+}
+
+document.getElementById('analyze').addEventListener('click', analyze);
+
+document.getElementById('exportPDF').addEventListener('click',()=>{
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(14);
+  doc.text('FullBody Health Report',10,10);
+  doc.autoTable({startY:20,html:'#resultTable',theme:'grid'});
+  const finalY=doc.lastAutoTable.finalY+10;
+  doc.text('Doctor Recommendations',10,finalY);
+  doc.autoTable({startY:finalY+2,html:'#doctorTable',theme:'grid'});
+  doc.save('FullBody_Report.pdf');
+});
+</script>
+</body>
+</html>
